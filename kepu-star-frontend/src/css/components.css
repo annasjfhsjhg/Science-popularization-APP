@@ -1,0 +1,143 @@
+/* ==============================
+   components.css
+   像素 UI 通用组件样式
+   ============================== */
+
+/* ===== 状态栏 ===== */
+.status-bar {
+  height: 32px;
+  background: #6998EC;
+  border-bottom: 4px solid #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  color: #FFEEC4;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* ===== 底部导航 TabBar ===== */
+.tabbar {
+  height: 70px;
+  background: #6998EC;
+  border-top: 4px solid #000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  padding: 6px 0;
+  color: #FFEEC4;
+}
+
+.tab-item .icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 2px;
+  opacity: 0.6;
+}
+
+.tab-item .label {
+  font-size: 11px;
+}
+
+.tab-item.active .icon {
+  opacity: 1;
+  background: #FFEF0F;
+  border: 2px solid #000;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-item.active .label {
+  color: #FFEF0F;
+  font-weight: bold;
+}
+
+/* ===== 像素按钮（组件级） ===== */
+.pixel-btn {
+  background: #FF6B35;
+  color: #fff;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  padding: 10px 20px;
+  font-family: 'ZCOOL KuaiLe', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.pixel-btn.clicked {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* ===== 通用卡片 ===== */
+.pixel-box {
+  background: #fff;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+/* ===== 弹窗 Modal ===== */
+.modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #FFEEC4;
+  border: 4px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  padding: 24px;
+  width: 80%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.modal-content .big-emoji {
+  font-size: 56px;
+  background: #FFEF0F;
+  border: 3px solid #000;
+  width: 80px;
+  height: 80px;
+  line-height: 76px;
+  margin: 0 auto 12px;
+}
+
+.modal-content h3 {
+  color: #FF6B35;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.modal-content p {
+  color: #000;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+/* ===== 弹窗文字换行支持 ===== */
+.modal-content p {
+  white-space: pre-line;
+}
