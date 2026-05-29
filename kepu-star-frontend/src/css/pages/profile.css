@@ -1,0 +1,52 @@
+ .profile-header {
+    background: #FF6B35;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+  .profile-avatar {
+    width: 70px; height: 70px;
+    background: #FFEF0F;
+    border: 3px solid #000;
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+  .profile-header h3 { font-size: 18px; text-shadow: 2px 2px 0 #000; margin-bottom: 4px; }
+  .profile-header p { font-size: 12px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    padding: 12px 4px;
+    text-align: center;
+  }
+  .stat-card h4 { font-size: 20px; color: #FF6B35; margin-bottom: 2px; }
+  .stat-card p { font-size: 11px; color: #333; }
+
+  .menu-list {
+    background: #fff;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .menu-item {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px dashed #000;
+    cursor: pointer;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-icon { font-size: 22px; margin-right: 12px; }
+  .menu-item span { flex: 1; font-size: 14px; color: #000; }
+  .menu-item::after { content: '▶'; color: #FF6B35; font-size: 12px; }

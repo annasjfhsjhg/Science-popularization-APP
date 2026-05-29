@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>科普星球 · 像素版</title>
+  <!-- 引入合并后的CSS -->
+  <link rel="stylesheet" href="../src/css/base.css">
+  <link rel="stylesheet" href="../src/css/layout.css">
+  <link rel="stylesheet" href="../src/css/components.css">
+  <link rel="stylesheet" href="../src/css/pages/home.css">
+<!-- 页面样式 -->
+  <link rel="stylesheet" href="../src/css/pages/home.css">
+ <link rel="stylesheet" href="../src/css/pages/astronomy.css">
+ <link rel="stylesheet" href="../src/css/pages/history.css">
+ <link rel="stylesheet" href="../src/css/pages/insect.css">
+ <link rel="stylesheet" href="../src/css/pages/collection.css">
+ <link rel="stylesheet" href="../src/css/pages/achievement.css">
+ <link rel="stylesheet" href="../src/css/pages/profile.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>★ PIXEL ★</span>
+      <span>100%</span>
+    </div>
+
+    <!-- 页面容器 -->
+    <div class="pages">
+      <!-- 首页 -->
+      <div class="page active" id="home">
+       <div class="home-banner">
+        <h2>你好，小探险家！</h2>
+        <p>今天又是元气满满的探索日～</p>
+      </div>
+
+      <div class="level-card">
+        <div class="pixel-avatar">🧒</div>
+        <div class="level-info">
+          <h3>小科学家 Lv.5</h3>
+          <div class="pixel-progress"><div class="pixel-progress-fill"></div></div>
+          <span>距离升级还差 350 经验</span>
+        </div>
+      </div>
+
+      <div class="section-title">★ 每日推荐</div>
+      <div class="recommend-card" onclick="showPage('astronomy')">
+        <div class="emoji">🔭</div>
+        <div>
+          <h4>今日探索：猎户座的秘密</h4>
+          <p>点击进入，开启星空之旅！</p>
+        </div>
+      </div>
+
+      <div class="section-title">★ 游戏分类</div>
+      <div class="game-grid">
+        <div class="game-card" onclick="showPage('astronomy')">
+          <div class="game-icon icon-blue">🌌</div>
+          <h4>天文世界</h4>
+          <p>星座连线</p>
+        </div>
+        <div class="game-card" onclick="showPage('history')">
+          <div class="game-icon icon-orange">🏺</div>
+          <h4>历史文明</h4>
+          <p>文物拼图</p>
+        </div>
+        <div class="game-card" onclick="showPage('insect')">
+          <div class="game-icon icon-green">🦋</div>
+          <h4>昆虫自然</h4>
+          <p>生态探索</p>
+        </div>
+        <div class="game-card" onclick="showPage('collection')">
+          <div class="game-icon icon-purple">📖</div>
+          <h4>科普图鉴</h4>
+          <p>收集知识</p>
+        </div>
+      </div>
+    </div>
+      <!-- 天文 -->
+    <div class="page" id="astronomy">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('home')">◀</div>
+        <div class="game-title">🌌 星座连线</div>
+      </div>
+
+      <div class="star-canvas" id="starCanvas">
+        <div class="star-tip" id="starTip">点击两颗星把它们连起来！</div>
+        <svg id="lineLayer"></svg>
+        <div class="star" data-id="1" style="top: 50px; left: 70px;"></div>
+        <div class="star" data-id="2" style="top: 90px; left: 140px;"></div>
+        <div class="star" data-id="3" style="top: 130px; left: 210px;"></div>
+        <div class="star" data-id="4" style="top: 100px; left: 270px;"></div>
+        <div class="star" data-id="5" style="top: 180px; left: 110px;"></div>
+        <div class="star" data-id="6" style="top: 220px; left: 180px;"></div>
+        <div class="star" data-id="7" style="top: 240px; left: 260px;"></div>
+      </div>
+
+      <div class="knowledge-card">
+        <h4>⭐ 猎户座 Orion</h4>
+        <p>猎户座由七颗明亮的星星组成。其中"参宿四"是颗红超巨星，比太阳大1000倍！</p>
+      </div>
+      <div class="knowledge-card">
+        <h4>💡 小知识</h4>
+        <p>古希腊神话中，猎户座代表勇敢的猎人俄里翁。点击星星把它们连起来吧！</p>
+      </div>
+      <button class="pixel-btn" style="width:100%; margin-top:6px;" onclick="resetStars()">🔄 重新连线</button>
+    </div>
+
+ <!-- 历史 -->
+    <div class="page" id="history">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('home')">◀</div>
+        <div class="game-title">🏺 文物拼图</div>
+      </div>
+
+      <div class="puzzle-board">
+        <div class="puzzle-grid">
+          <div class="puzzle-piece">🏺</div>
+          <div class="puzzle-piece">🟫</div>
+          <div class="puzzle-piece">🟧</div>
+          <div class="puzzle-piece">🟧</div>
+          <div class="puzzle-piece">🏛️</div>
+          <div class="puzzle-piece">🟫</div>
+          <div class="puzzle-piece">🟫</div>
+          <div class="puzzle-piece">🟧</div>
+          <div class="puzzle-piece">🏺</div>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <h4>🏺 四羊方尊</h4>
+        <p>商代晚期青铜礼器，距今3000多年。四只大卷角羊立于器身四角，是中国青铜艺术巅峰。</p>
+      </div>
+      <button class="pixel-btn" style="width:100%;" onclick="showAchievement()">完成拼图 🎉</button>
+    </div>
+
+  <!-- 昆虫 -->
+    <div class="page" id="insect">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('home')">◀</div>
+        <div class="game-title">🦋 生命周期</div>
+      </div>
+
+      <div class="insect-area">
+        <p>按生命周期顺序排列吧！</p>
+        <div class="insect-list">
+          <div class="insect-item">🥚</div>
+          <div class="insect-item">🐛</div>
+          <div class="insect-item">🛡️</div>
+          <div class="insect-item">🦋</div>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <h4>🦋 蝴蝶的一生</h4>
+        <p>卵 → 幼虫 → 蛹 → 成虫，这种神奇变化叫"完全变态发育"！</p>
+      </div>
+      <div class="knowledge-card">
+        <h4>🌿 你知道吗？</h4>
+        <p>全世界有超过 18,000 种蝴蝶，最大的翅膀展开可达 30 厘米！</p>
+      </div>
+    </div>
+
+<!-- 图鉴 -->
+    <div class="page" id="collection">
+      <div class="section-title" style="display:block; text-align:center;">📖 科普图鉴</div>
+
+      <div class="collection-tabs">
+        <div class="tab active">全部</div>
+        <div class="tab">天文</div>
+        <div class="tab">历史</div>
+        <div class="tab">昆虫</div>
+      </div>
+
+      <div class="collection-grid">
+        <div class="collection-card"><div class="emoji">🌟</div><p>猎户座</p></div>
+        <div class="collection-card"><div class="emoji">🌙</div><p>月球</p></div>
+        <div class="collection-card locked"><div class="emoji">🪐</div><p>???</p></div>
+        <div class="collection-card"><div class="emoji">🏺</div><p>四羊方尊</p></div>
+        <div class="collection-card"><div class="emoji">🗿</div><p>兵马俑</p></div>
+        <div class="collection-card locked"><div class="emoji">⚱️</div><p>???</p></div>
+        <div class="collection-card"><div class="emoji">🦋</div><p>蝴蝶</p></div>
+        <div class="collection-card"><div class="emoji">🐝</div><p>蜜蜂</p></div>
+        <div class="collection-card locked"><div class="emoji">🐞</div><p>???</p></div>
+      </div>
+    </div>
+ <!-- 成就 -->
+    <div class="page" id="achievement">
+      <div class="section-title" style="display:block; text-align:center;">🏆 成就中心</div>
+
+      <div class="achievement-item">
+        <div class="badge">🌟</div>
+        <div class="achievement-info">
+          <h4>天文新手</h4>
+          <p>完成第一个星座连线</p>
+          <div class="pixel-progress"><div class="pixel-progress-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div class="achievement-item">
+        <div class="badge">🏺</div>
+        <div class="achievement-info">
+          <h4>文物守护者</h4>
+          <p>完成 5 个文物拼图</p>
+          <div class="pixel-progress"><div class="pixel-progress-fill" style="width:60%"></div></div>
+        </div>
+      </div>
+      <div class="achievement-item">
+        <div class="badge">🦋</div>
+        <div class="achievement-info">
+          <h4>昆虫小专家</h4>
+          <p>认识 10 种昆虫</p>
+          <div class="pixel-progress"><div class="pixel-progress-fill" style="width:80%"></div></div>
+        </div>
+      </div>
+      <div class="achievement-item">
+        <div class="badge locked">🔒</div>
+        <div class="achievement-info">
+          <h4>知识达人</h4>
+          <p>解锁 50 张图鉴卡片</p>
+          <div class="pixel-progress"><div class="pixel-progress-fill" style="width:30%"></div></div>
+        </div>
+      </div>
+      <div class="achievement-item">
+        <div class="badge locked">🔒</div>
+        <div class="achievement-info">
+          <h4>探索大师</h4>
+          <p>连续登录 30 天</p>
+          <div class="pixel-progress"><div class="pixel-progress-fill" style="width:20%"></div></div>
+        </div>
+      </div>
+    </div>
+ <!-- 我的 -->
+    <div class="page" id="profile">
+      <div class="profile-header">
+        <div class="profile-avatar">🧒</div>
+        <h3>小明同学</h3>
+        <p>★ Lv.5 · 加入30天 ★</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><h4>28</h4><p>解锁图鉴</p></div>
+        <div class="stat-card"><h4>5</h4><p>获得成就</p></div>
+        <div class="stat-card"><h4>1280</h4><p>探索经验</p></div>
+      </div>
+
+      <div class="menu-list">
+        <div class="menu-item"><span class="menu-icon">📊</span><span>学习报告</span></div>
+        <div class="menu-item"><span class="menu-icon">⚙️</span><span>难度设置</span></div>
+        <div class="menu-item"><span class="menu-icon">🤖</span><span>AI 科普助手</span></div>
+        <div class="menu-item"><span class="menu-icon">👨‍👩‍👧</span><span>家长中心</span></div>
+        <div class="menu-item"><span class="menu-icon">🔔</span><span>消息通知</span></div>
+        <div class="menu-item"><span class="menu-icon">ℹ️</span><span>关于我们</span></div>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="tabbar">
+  <div class="tab-item active" data-page="home">
+    <span class="icon">🏠</span>
+    <span class="label">首页</span>
+  </div>
+  <div class="tab-item" data-page="astronomy">
+    <span class="icon">🔭</span>
+    <span class="label">天文</span>
+  </div>
+  <div class="tab-item" data-page="history">
+    <span class="icon">🏺</span>
+    <span class="label">历史</span>
+  </div>
+  <div class="tab-item" data-page="collection">
+    <span class="icon">📖</span>
+    <span class="label">图鉴</span>
+  </div>
+  <div class="tab-item" data-page="profile">
+    <span class="icon">👤</span>
+    <span class="label">我的</span>
+  </div>
+</div>
+  <script type="module" src="../src/js/main.js"></script>
+</body>
+</html>

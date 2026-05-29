@@ -1,0 +1,87 @@
+
+.app {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: #FFEEC4;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 平板及以上 */
+@media (min-width: 768px) {
+  .app {
+    max-width: 960px;
+    margin: 0 auto;
+    border-left: 6px solid #000;
+    border-right: 6px solid #000;
+  }
+
+  .pages {
+    padding: 24px;
+  }
+
+  .game-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .collection-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* 平板：底部 Tab 变顶部导航 */
+@media (min-width: 768px) {
+  .tabbar {
+    position: sticky;
+    top: 0;
+    border-top: none;
+    border-bottom: 4px solid #000;
+  }
+}
+
+/* 平板：字体略微放大 */
+@media (min-width: 768px) {
+  body {
+    font-size: 18px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+}
+
+.status-bar {
+  flex-shrink: 0;
+  height: 32px;
+  background: #6998EC;
+  border-bottom: 4px solid #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  color: #FFEEC4;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.pages {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  background: #FFEEC4;
+}
+.page { display: none; padding: 12px; min-height: 100%; }
+.page.active { display: block; }
+
+.tabbar {
+  flex-shrink: 0;
+  height: 70px;
+  background: #6998EC;
+  border-top: 4px solid #000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
