@@ -9,6 +9,31 @@ import {
   syncAchievementsFromBackend
 } from './store.js';
 
+const APP_SETTINGS = {
+  difficulty: 'normal'
+};
+
+const COLLECTION_CATEGORIES = {
+  all: '全部',
+  astronomy: '天文',
+  history: '历史',
+  insect: '昆虫'
+};
+
+const COLLECTION_LIBRARY = [
+  { name: '猎户座', category: 'astronomy', icon: '🌟', desc: '星座连线的入门图鉴' },
+  { name: '月球', category: 'astronomy', icon: '🌙', desc: '夜空中最熟悉的伙伴' },
+  { name: '土星', category: 'astronomy', icon: '🪐', desc: '拥有美丽光环的行星' },
+  { name: '四羊方尊', category: 'history', icon: '🏺', desc: '商代青铜礼器代表作' },
+  { name: '兵马俑', category: 'history', icon: '🗿', desc: '秦始皇陵地下军团' },
+  { name: '青铜鼎', category: 'history', icon: '⚱️', desc: '古代礼制与铸造工艺的象征' },
+  { name: '蝴蝶', category: 'insect', icon: '🦋', desc: '完全变态发育的经典代表' },
+  { name: '蜜蜂', category: 'insect', icon: '🐝', desc: '勤劳的授粉小能手' },
+  { name: '瓢虫', category: 'insect', icon: '🐞', desc: '会帮植物“吃虫”的益虫' }
+];
+
+let currentCollectionCategory = 'all';
+
 
 /* ========== 工具 ========== */
 function getLevelProgress() {
@@ -42,14 +67,30 @@ function renderCollection() {
   if (!grid) return;
   grid.innerHTML = '';
 
-  COLLECTIONS.forEach(c => {
+  const unlockedNames = new Set(COLLECTIONS.filter(c => c.unlocked).map(c => c.name));
+  const visibleCards = COLLECTION_LIBRARY.filter(card => {
+    return currentCollectionCategory === 'all' || card.category === currentCollectionCategory;
+  });
+
+  visibleCards.forEach(cardData => {
+    const unlocked = unlockedNames.has(cardData.name);
     const card = document.createElement('div');
-    card.className = 'collection-card' + (c.unlocked ? '' : ' locked');
+    card.className = 'collection-card category-card ' + cardData.category + (unlocked ? '' : ' locked');
     card.innerHTML = `
-      <div class="emoji">${c.unlocked ? '🌟' : '❓'}</div>
-      <p>${c.unlocked ? c.name : '???'}</p>
+      <div class="emoji">${unlocked ? cardData.icon : '❓'}</div>
+      <p>${unlocked ? cardData.name : '???'}</p>
+      <small>${unlocked ? cardData.desc : '未解锁图鉴'}</small>
     `;
     grid.appendChild(card);
+  });
+}
+
+function renderCollectionTabs() {
+  document.querySelectorAll('.collection-tabs .tab').forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.getAttribute('data-category') === currentCollectionCategory) {
+      tab.classList.add('active');
+    }
   });
 }
 
@@ -74,16 +115,87 @@ function renderAchievement() {
   });
 }
 
+function renderLearningReport() {
+  const reportDays = Math.min(7, Math.max(3, Math.floor(USER.joinDays / 5)));
+  const reportFinish = USER.stats.collection + USER.stats.achievements;
+  const strongText =
+    USER.stats.collection >= USER.stats.achievements
+      ? '你在知识收集上表现优秀，图鉴解锁速度很快。'
+      : '你在挑战任务上完成度很高，成就推进非常稳定。';
+  const suggestionText =
+    USER.stats.collection < 30
+      ? '建议优先补齐未解锁图鉴，形成更完整的知识网络。'
+      : '建议开启挑战模式，提升答题速度和知识迁移能力。';
+
+  setText('#report-days', String(reportDays));
+  setText('#report-exp', String(USER.stats.expTotal));
+  setText('#report-finish', String(reportFinish));
+  setText('#report-strong', strongText);
+  setText('#report-suggestion', suggestionText);
+}
+
+function renderDifficultySettings() {
+  const textMap = {
+    easy: '轻松模式：更多提示与引导，适合刚开始探索的小朋友。',
+    normal: '普通模式：题目数量适中，提示较平衡。',
+    hard: '挑战模式：题量更大、节奏更快，适合进阶玩家。'
+  };
+
+  setText('#difficulty-text', textMap[APP_SETTINGS.difficulty] || textMap.normal);
+
+  document.querySelectorAll('.difficulty-item').forEach(item => {
+    item.classList.remove('active');
+  });
+
+  const active = document.getElementById(`difficulty-${APP_SETTINGS.difficulty}`);
+  if (active) active.classList.add('active');
+}
+
+function setActiveTab(pageId) {
+  document.querySelectorAll('.tab-item').forEach(t => {
+    t.classList.remove('active');
+    if (t.getAttribute('data-page') === pageId) {
+      t.classList.add('active');
+    }
+  });
+}
+
+function syncTabByPage(pageId) {
+  const pageToTab = {
+    home: 'home',
+    astronomy: 'astronomy',
+    history: 'history',
+    insect: null,
+    collection: 'collection',
+    achievement: null,
+    profile: 'profile',
+    'learning-report': 'profile',
+    'difficulty-settings': 'profile',
+    'ai-assistant': 'profile',
+    'parent-center': 'profile',
+    'notification-center': 'profile',
+    'about-us': 'profile'
+  };
+
+  const tabPage = pageToTab[pageId];
+  if (tabPage) setActiveTab(tabPage);
+}
+
 /* ========== 页面切换 ========== */
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const page = document.getElementById(id);
   if (page) page.classList.add('active');
 
+  syncTabByPage(id);
+
 
   if (id === 'profile') renderProfile();
   if (id === 'collection') renderCollection();
+  if (id === 'collection') renderCollectionTabs();
   if (id === 'achievement') renderAchievement();
+  if (id === 'learning-report') renderLearningReport();
+  if (id === 'difficulty-settings') renderDifficultySettings();
 
   const pages = document.querySelector('.pages');
 if (pages) pages.scrollTop = 0;
@@ -91,13 +203,22 @@ if (pages) pages.scrollTop = 0;
 
 /* ========== Tab ========== */
 function switchTab(pageId, el) {
-  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
+  setActiveTab(pageId);
   showPage(pageId);
 }
 
 /* ========== 初始化 ========== */
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.collection-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const category = tab.getAttribute('data-category');
+      if (!category) return;
+      currentCollectionCategory = category;
+      renderCollection();
+      renderCollectionTabs();
+    });
+  });
+
 
   //登录态判断
   const token = localStorage.getItem('token');
@@ -157,6 +278,27 @@ function showModal(title, text, emoji = '🌟') {
 
 /* ========== 暴露 ========== */
 window.showPage = showPage;
+window.openProfileSection = function (pageId) {
+  setActiveTab('profile');
+  showPage(pageId);
+};
+window.setCollectionCategory = function (category) {
+  currentCollectionCategory = category;
+  renderCollection();
+  renderCollectionTabs();
+};
+window.setDifficulty = function (level) {
+  APP_SETTINGS.difficulty = level;
+  renderDifficultySettings();
+
+  const levelName = {
+    easy: '轻松模式',
+    normal: '普通模式',
+    hard: '挑战模式'
+  };
+
+  showModal('设置已更新', `已切换到${levelName[level] || '普通模式'}`, '⚙️');
+};
 
 // 重置星座
 window.resetStars = function () {
