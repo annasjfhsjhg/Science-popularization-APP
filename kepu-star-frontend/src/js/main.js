@@ -1,3 +1,4 @@
+const BASE_URL = 'https://10.252.136.168:8080';
 import { USER } from './store.js';
 import { COLLECTIONS } from './store.js';
 import { ACHIEVEMENTS } from './store.js';
@@ -84,7 +85,8 @@ function showPage(id) {
   if (id === 'collection') renderCollection();
   if (id === 'achievement') renderAchievement();
 
-  document.querySelector('.pages').scrollTop = 0;
+  const pages = document.querySelector('.pages');
+if (pages) pages.scrollTop = 0;
 }
 
 /* ========== Tab ========== */
@@ -96,6 +98,19 @@ function switchTab(pageId, el) {
 
 /* ========== 初始化 ========== */
 document.addEventListener('DOMContentLoaded', () => {
+
+  //登录态判断
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    showPage('login');
+    return; // ✅ 没登录就不初始化游戏
+  }
+
+  //已登录，先同步数据
+  showPage('home');
+
+  // Tab 切换
   document.querySelectorAll('.tabbar .tab-item').forEach(item => {
     item.addEventListener('click', () => {
       const pageId = item.getAttribute('data-page');
@@ -103,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // 游戏卡片点击
   document.querySelectorAll('.game-card').forEach(card => {
     card.addEventListener('click', () => {
       const targetPage = card.getAttribute('data-target');
@@ -110,13 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // 初始化星座游戏
   if (document.getElementById('astronomy')) {
     initAstronomyGame();
   }
 
   console.log('main.js loaded');
 });
-
 /* ========== 工具函数 ========== */
 function setText(selector, text) {
   const el = document.querySelector(selector);
@@ -162,4 +178,25 @@ window.showAchievement = function () {
     '文物拼图完成\n解锁【文物守护者】',
     '🏺'
   );
+};
+// 登录
+window.handleLogin = async function () {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  console.log('发送 POST 登录请求 →', BASE_URL + '/api/auth/login');
+
+  try {
+    const res = await login({ username, password });
+
+    if (res.code === 0 && res.data?.token) {
+      localStorage.setItem('token', res.data.token);
+      alert('登录成功 🎉');
+      showPage('home');
+    } else {
+      alert('登录失败：' + (res.message || '未知错误'));
+    }
+  } catch (e) {
+    alert('网络错误或后端未启动');
+  }
 };
