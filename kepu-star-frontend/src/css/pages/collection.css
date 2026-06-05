@@ -16,6 +16,15 @@
   }
   .tab.active { background: #FF6B35; color: #fff; }
 
+  .tab {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .tab:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000;
+  }
+
   .collection-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -41,3 +50,25 @@
   }
   .collection-card p { font-size: 11px; color: #000; }
   .collection-card.locked p { color: #999; }
+
+  .collection-card small {
+    display: block;
+    font-size: 10px;
+    line-height: 1.4;
+    color: #666;
+    margin-top: 4px;
+    min-height: 28px;
+  }
+
+  .collection-card.locked small {
+    color: #aaa;
+  }
+
+  .collection-grid {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .collection-grid.is-switching {
+    opacity: 0.45;
+    transform: scale(0.985);
+  }

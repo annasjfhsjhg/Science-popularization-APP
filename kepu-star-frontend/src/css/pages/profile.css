@@ -50,3 +50,67 @@
   .menu-icon { font-size: 22px; margin-right: 12px; }
   .menu-item span { flex: 1; font-size: 14px; color: #000; }
   .menu-item::after { content: '▶'; color: #FF6B35; font-size: 12px; }
+
+  .report-overview h4 {
+    margin-bottom: 10px;
+    color: #FF6B35;
+  }
+
+  .report-grid {
+    margin-bottom: 0;
+  }
+
+  .difficulty-tip {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .difficulty-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .difficulty-item {
+    background: #fff;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    padding: 12px;
+    cursor: pointer;
+  }
+
+  .difficulty-item div {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 2px;
+  }
+
+  .difficulty-item small {
+    color: #444;
+    font-size: 12px;
+  }
+
+  .difficulty-item.active {
+    background: #FFEF0F;
+    transform: translate(-2px, -2px);
+  }
+
+  .assistant-input {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    border-style: dashed;
+  }
+
+  .notice-item h4 {
+    margin-bottom: 4px;
+    color: #FF6B35;
+  }
+
+  .notice-item p {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.5;
+  }

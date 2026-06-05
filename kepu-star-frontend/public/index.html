@@ -168,10 +168,10 @@
       <div class="section-title" style="display:block; text-align:center;">📖 科普图鉴</div>
 
       <div class="collection-tabs">
-        <div class="tab active">全部</div>
-        <div class="tab">天文</div>
-        <div class="tab">历史</div>
-        <div class="tab">昆虫</div>
+        <div class="tab active" data-category="all">全部</div>
+        <div class="tab" data-category="astronomy">天文</div>
+        <div class="tab" data-category="history">历史</div>
+        <div class="tab" data-category="insect">昆虫</div>
       </div>
 
       <div class="collection-grid">
@@ -246,12 +246,133 @@
       </div>
 
       <div class="menu-list">
-        <div class="menu-item"><span class="menu-icon">📊</span><span>学习报告</span></div>
-        <div class="menu-item"><span class="menu-icon">⚙️</span><span>难度设置</span></div>
-        <div class="menu-item"><span class="menu-icon">🤖</span><span>AI 科普助手</span></div>
-        <div class="menu-item"><span class="menu-icon">👨‍👩‍👧</span><span>家长中心</span></div>
-        <div class="menu-item"><span class="menu-icon">🔔</span><span>消息通知</span></div>
-        <div class="menu-item"><span class="menu-icon">ℹ️</span><span>关于我们</span></div>
+        <div class="menu-item" onclick="openProfileSection('learning-report')"><span class="menu-icon">📊</span><span>学习报告</span></div>
+        <div class="menu-item" onclick="openProfileSection('difficulty-settings')"><span class="menu-icon">⚙️</span><span>难度设置</span></div>
+        <div class="menu-item" onclick="openProfileSection('ai-assistant')"><span class="menu-icon">🤖</span><span>AI 科普助手</span></div>
+        <div class="menu-item" onclick="openProfileSection('parent-center')"><span class="menu-icon">👨‍👩‍👧</span><span>家长中心</span></div>
+        <div class="menu-item" onclick="openProfileSection('notification-center')"><span class="menu-icon">🔔</span><span>消息通知</span></div>
+        <div class="menu-item" onclick="openProfileSection('about-us')"><span class="menu-icon">ℹ️</span><span>关于我们</span></div>
+      </div>
+    </div>
+
+    <!-- 学习报告 -->
+    <div class="page" id="learning-report">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('profile')">◀</div>
+        <div class="game-title">📊 学习报告</div>
+      </div>
+
+      <div class="pixel-box report-overview">
+        <h4>本周学习概览</h4>
+        <div class="stats-grid report-grid">
+          <div class="stat-card"><h4 id="report-days">0</h4><p>学习天数</p></div>
+          <div class="stat-card"><h4 id="report-exp">0</h4><p>累计经验</p></div>
+          <div class="stat-card"><h4 id="report-finish">0</h4><p>完成挑战</p></div>
+        </div>
+      </div>
+
+      <div class="knowledge-card">
+        <h4>⭐ 优势领域</h4>
+        <p id="report-strong">你在天文探索表现亮眼，继续保持！</p>
+      </div>
+      <div class="knowledge-card">
+        <h4>🎯 学习建议</h4>
+        <p id="report-suggestion">建议增加历史文明挑战次数，解锁更多文物卡片。</p>
+      </div>
+      <button class="pixel-btn" style="width: 100%;" onclick="showPage('profile')">返回我的主页</button>
+    </div>
+
+    <!-- 难度设置 -->
+    <div class="page" id="difficulty-settings">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('profile')">◀</div>
+        <div class="game-title">⚙️ 难度设置</div>
+      </div>
+
+      <div class="pixel-box">
+        <h4 style="margin-bottom: 10px;">当前难度</h4>
+        <p id="difficulty-text" class="difficulty-tip">普通模式：题目数量适中，提示较平衡。</p>
+      </div>
+
+      <div class="difficulty-list">
+        <div class="difficulty-item" id="difficulty-easy" onclick="setDifficulty('easy')">
+          <div>🌱 轻松模式</div>
+          <small>更多提示，节奏更慢</small>
+        </div>
+        <div class="difficulty-item active" id="difficulty-normal" onclick="setDifficulty('normal')">
+          <div>⚡ 普通模式</div>
+          <small>推荐给大多数小探险家</small>
+        </div>
+        <div class="difficulty-item" id="difficulty-hard" onclick="setDifficulty('hard')">
+          <div>🔥 挑战模式</div>
+          <small>题目更多，限时更短</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 科普助手 -->
+    <div class="page" id="ai-assistant">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('profile')">◀</div>
+        <div class="game-title">🤖 AI 科普助手</div>
+      </div>
+
+      <div class="knowledge-card">
+        <h4>你可以这样问我</h4>
+        <p>1. 为什么月亮有阴晴圆缺？\n2. 蝴蝶为什么会蜕变？\n3. 古代青铜器是怎么做出来的？</p>
+      </div>
+      <div class="pixel-box assistant-input">今天想探索哪个知识点？</div>
+      <button class="pixel-btn" style="width: 100%;" onclick="showModal('AI 助手上线', '这是课堂演示版入口，后续可接入真实问答 API。', '🤖')">开始提问</button>
+    </div>
+
+    <!-- 家长中心 -->
+    <div class="page" id="parent-center">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('profile')">◀</div>
+        <div class="game-title">👨‍👩‍👧 家长中心</div>
+      </div>
+
+      <div class="pixel-box">
+        <h4>本周专注时长</h4>
+        <p>约 126 分钟，较上周提升 18%</p>
+      </div>
+      <div class="pixel-box">
+        <h4>推荐陪伴任务</h4>
+        <p>和孩子一起完成 1 次历史文明拼图，讨论文物背后的故事。</p>
+      </div>
+    </div>
+
+    <!-- 消息通知 -->
+    <div class="page" id="notification-center">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('profile')">◀</div>
+        <div class="game-title">🔔 消息通知</div>
+      </div>
+
+      <div class="pixel-box notice-item">
+        <h4>每日提醒</h4>
+        <p>今天还差 1 次探索即可完成连续学习打卡。</p>
+      </div>
+      <div class="pixel-box notice-item">
+        <h4>成就更新</h4>
+        <p>你距离“知识达人”成就还差 4 张图鉴。</p>
+      </div>
+    </div>
+
+    <!-- 关于我们 -->
+    <div class="page" id="about-us">
+      <div class="game-header">
+        <div class="back-btn" onclick="showPage('profile')">◀</div>
+        <div class="game-title">ℹ️ 关于我们</div>
+      </div>
+
+      <div class="knowledge-card">
+        <h4>科普星球</h4>
+        <p>我们希望通过游戏化学习，让孩子在探索中建立科学兴趣与长期学习动力。</p>
+      </div>
+      <div class="knowledge-card">
+        <h4>版本信息</h4>
+        <p>演示版本 v1.0.0 · 课程作业前端原型</p>
       </div>
     </div>
 
