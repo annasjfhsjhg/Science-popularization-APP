@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.96.122.102:3306/kepuxingqiu?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: aa02022918
+  data:
+    redis:
+      host: 47.96.122.102
+      port: 6379
+      password: aa02022918
+      database: 0
+  rabbitmq:
+    host: 47.96.122.102
+    port: 5672
+    username: kepu
+    password: aa02022918
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual   # 手动 ACK，消费失败不丢消息
+        prefetch: 1

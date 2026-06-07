@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kepuxingqiu.mapper.UserGameProgressMapper">
+
+    <select id="countCompletedByCategoryId" resultType="int">
+        SELECT COUNT(*)
+        FROM user_game_progress ugp
+        INNER JOIN game_content gc ON ugp.game_content_id = gc.id
+        WHERE ugp.user_id = #{userId}
+          AND gc.category_id = #{categoryId}
+          AND ugp.status = 2
+    </select>
+
+    <select id="countTotalCompleted" resultType="int">
+        SELECT COUNT(*)
+        FROM user_game_progress
+        WHERE user_id = #{userId}
+          AND status = 2
+    </select>
+
+    <select id="selectProgressSummary" resultType="com.kepuxingqiu.vo.GameProgressVO">
+        SELECT
+            gc_cat.name AS categoryName,
+            COUNT(CASE WHEN ugp.status = 2 THEN 1 END) AS completedCount,
+            COUNT(*) AS totalCount
+        FROM game_category gc_cat
+        LEFT JOIN game_content gc ON gc.category_id = gc_cat.id
+        LEFT JOIN user_game_progress ugp ON ugp.game_content_id = gc.id AND ugp.user_id = #{userId}
+        GROUP BY gc_cat.id, gc_cat.name
+        ORDER BY gc_cat.sort_order
+    </select>
+
+</mapper>

@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  data:
+    redis:
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.kepuxingqiu.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+knife4j:
+  enable: true
+  openapi:
+    title: 科普星球 API文档
+    description: 面向儿童的互动科普教育App后端接口
+    version: "1.0"
+    concat: kepuxingqiu
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.kepuxingqiu.controller
+
+kepu:
+  jwt:
+    # 至少256位(32字节)以支持HS256
+    secret: kepuxingqiu-secret-key-2024-must-be-at-least-256-bits
+    expire: 604800  # 7天，单位秒
