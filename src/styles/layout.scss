@@ -1,0 +1,29 @@
+/* layout.scss */
+
+.page-wrap {
+  min-height: 100vh;
+  background: #FFEEC4;
+  padding: 24rpx;
+  padding-bottom: 160rpx; /* 留出 tabbar 空间 */
+  box-sizing: border-box;
+}
+
+/* #ifdef H5 */
+@media (min-width: 768px) {
+  .page-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    border-left: 6px solid #000;
+    border-right: 6px solid #000;
+    padding: 48rpx;
+  }
+
+  .game-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  .collection-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+}
+/* #endif */

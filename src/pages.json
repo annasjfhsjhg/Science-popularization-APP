@@ -1,0 +1,108 @@
+{
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/astronomy/astronomy",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/history/history",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/insect/insect",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/collection/collection",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/achievement/achievement",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/learning-report",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/difficulty-settings",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/ai-assistant",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/parent-center",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/notification-center",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/about-us",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "tabBar": {
+    "custom": true,
+    "color": "#FFEEC4",
+    "selectedColor": "#FFEF0F",
+    "borderStyle": "black",
+    "backgroundColor": "#6998EC",
+    "list": [
+      { "pagePath": "pages/home/home",             "text": "首页" },
+      { "pagePath": "pages/astronomy/astronomy",   "text": "天文" },
+      { "pagePath": "pages/history/history",       "text": "历史" },
+      { "pagePath": "pages/collection/collection", "text": "图鉴" },
+      { "pagePath": "pages/profile/profile",       "text": "我的" }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "科普星球",
+    "navigationBarBackgroundColor": "#FFEEC4",
+    "backgroundColor": "#FFEEC4"
+  }
+}
