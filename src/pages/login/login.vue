@@ -7,21 +7,22 @@ const password = ref('')
 const loading = ref(false)
 
 async function handleLogin() {
-  if (loading.value) return
-  loading.value = true
-  try {
-    const res = await login({ username: username.value, password: password.value })
-    if (res.code === 0 && res.data?.token) {
-      uni.setStorageSync('token', res.data.token)
-      uni.reLaunch({ url: '/pages/home/home' })
-    } else {
-      uni.showToast({ title: '登录失败：' + (res.message || '未知错误'), icon: 'none', duration: 2000 })
-    }
-  } catch {
-    uni.showToast({ title: '网络错误或后端未启动', icon: 'none', duration: 2000 })
-  } finally {
-    loading.value = false
-  }
+  // if (loading.value) return
+  // loading.value = true
+  // try {
+  //   const res = await login({ username: username.value, password: password.value })
+  //   if (res.code === 0 && res.data?.token) {
+  //     uni.setStorageSync('token', res.data.token)
+  //     uni.reLaunch({ url: '/pages/home/home' })
+  //   } else {
+  //     uni.showToast({ title: '登录失败：' + (res.message || '未知错误'), icon: 'none', duration: 2000 })
+  //   }
+  // } catch {
+  //   uni.showToast({ title: '网络错误或后端未启动', icon: 'none', duration: 2000 })
+  // } finally {
+  //   loading.value = false
+  // }
+  uni.reLaunch({ url: '/pages/home/home' })
 }
 </script>
 

@@ -1,26 +1,53 @@
 <script setup>
-const ACHIEVEMENT_LIST = [
-  { id: 'astronomy-novice',  badge: '🌟', name: '天文新手',   desc: '完成第一个星座连线',    progress: 100 },
-  { id: 'artifact-guardian', badge: '🏺', name: '文物守护者', desc: '完成 5 个文物拼图',      progress: 60 },
-  { id: 'insect-expert',     badge: '🦋', name: '昆虫小专家', desc: '认识 10 种昆虫',         progress: 80 },
-  { id: 'knowledge-master',  badge: '🔒', name: '知识达人',   desc: '解锁 50 张图鉴卡片',    progress: 30, locked: true },
-  { id: 'explorer-master',   badge: '🔒', name: '探索大师',   desc: '连续登录 30 天',         progress: 20, locked: true },
-]
+import { ref, onMounted } from 'vue'
+import { getAchievementList } from '../../api/index.js'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+
+const achievements = ref([])
+const loading = ref(false)
+
+function getProgressPercent(item) {
+  if (item.unlocked) return 100
+  if (!item.total || item.total === 0) return 0
+  return Math.min(100, Math.round((item.progress / item.total) * 100))
+}
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    const res = await getAchievementList()
+    if (res.code === 0) achievements.value = res.data || []
+  } catch (e) {
+    console.error('成就加载失败', e)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
   <view class="page-wrap">
     <text class="section-title" style="display:block; text-align:center;">🏆 成就中心</text>
 
-    <view v-for="item in ACHIEVEMENT_LIST" :key="item.id" class="achievement-item">
-      <view class="badge" :class="{ locked: item.locked }">{{ item.badge }}</view>
-      <view class="achievement-info">
-        <text class="a-name">{{ item.name }}</text>
-        <text class="a-desc">{{ item.desc }}</text>
-        <view class="pixel-progress">
-          <view class="pixel-progress-fill" :style="{ width: item.progress + '%' }"></view>
+    <view v-if="loading" style="text-align:center; padding: 40rpx;">
+      <text>加载中...</text>
+    </view>
+
+    <view v-else>
+      <view v-for="item in achievements" :key="item.id" class="achievement-item">
+        <view class="badge" :class="{ locked: !item.unlocked }">{{ item.icon || '🔒' }}</view>
+        <view class="achievement-info">
+          <text class="a-name">{{ item.name }}</text>
+          <text class="a-desc">{{ item.description }}</text>
+          <view class="pixel-progress">
+            <view class="pixel-progress-fill" :style="{ width: getProgressPercent(item) + '%' }"></view>
+          </view>
+          <text v-if="!item.unlocked" style="font-size: 22rpx; color: #999;">
+            {{ item.progress }}/{{ item.total }}
+          </text>
         </view>
       </view>
     </view>
   </view>
+  <CustomTabBar current="achievement" />
 </template>

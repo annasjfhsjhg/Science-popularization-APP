@@ -10,6 +10,13 @@ function request(options) {
     uni.request({
       ...options,
       success(res) {
+        if (res.statusCode === 401) {
+          uni.removeStorageSync('token')
+          uni.removeStorageSync('userId')
+          uni.reLaunch({ url: '/pages/login/login' })
+          reject(new Error('未登录或Token已过期'))
+          return
+        }
         resolve(res.data)
       },
       fail(err) {
@@ -52,9 +59,17 @@ export function submitGameResult(data) {
   })
 }
 
-export function getCollectionList() {
+export function getCollectionList(category = 'all') {
   return request({
-    url: `${BASE_URL}/api/collection/list`,
+    url: `${BASE_URL}/api/encyclopedia/list?category=${category}`,
+    method: 'GET',
+    header: authHeader()
+  })
+}
+
+export function getUserProfile() {
+  return request({
+    url: `${BASE_URL}/api/user/profile`,
     method: 'GET',
     header: authHeader()
   })
@@ -71,6 +86,14 @@ export function getAchievementList() {
 export function getGameLevel() {
   return request({
     url: `${BASE_URL}/api/game/level?gameType=astronomy`,
+    method: 'GET',
+    header: authHeader()
+  })
+}
+
+export function getDashboard() {
+  return request({
+    url: `${BASE_URL}/api/home/dashboard`,
     method: 'GET',
     header: authHeader()
   })

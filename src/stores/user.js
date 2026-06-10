@@ -73,9 +73,16 @@ export const useUserStore = defineStore('user', () => {
 
   function syncFromBackend(data) {
     if (!data) return
-    user.exp = data.exp ?? user.exp
-    user.level = data.level ?? user.level
-    user.nextLevelExp = data.nextLevelExp ?? user.nextLevelExp
+    if (data.nickname        != null) user.nickname              = data.nickname
+    if (data.avatar          != null) user.avatar                = data.avatar
+    if (data.avatarUrl       != null) user.avatar                = data.avatarUrl
+    if (data.level           != null) user.level                 = data.level
+    if (data.exp             != null) user.exp                   = data.exp
+    if (data.experience      != null) { user.exp = data.experience; user.stats.expTotal = data.experience }
+    if (data.nextLevelExp    != null) user.nextLevelExp           = data.nextLevelExp
+    if (data.joinDays        != null) user.joinDays               = data.joinDays
+    if (data.unlockedEncCount  != null) user.stats.collection    = data.unlockedEncCount
+    if (data.achievementCount  != null) user.stats.achievements  = data.achievementCount
   }
 
   return {

@@ -1,8 +1,20 @@
 <script setup>
+import { onMounted } from 'vue'
 import { useUserStore } from '../../stores/user.js'
+import { getUserInfo, getUserProfile } from '../../api/index.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 
 const store = useUserStore()
+
+onMounted(async () => {
+  try {
+    const [infoRes, profileRes] = await Promise.all([getUserInfo(), getUserProfile()])
+    if (infoRes.code === 0)    store.syncFromBackend(infoRes.data)
+    if (profileRes.code === 0) store.syncFromBackend(profileRes.data)
+  } catch (e) {
+    console.error('用户信息加载失败', e)
+  }
+})
 
 const MENU_ITEMS = [
   { key: 'learning-report',      icon: '📊', label: '学习报告',    url: '/pages/profile/learning-report' },
