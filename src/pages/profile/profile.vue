@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useUserStore } from '../../stores/user.js'
 import { getUserInfo, getUserProfile } from '../../api/index.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const store = useUserStore()
 
@@ -31,7 +32,9 @@ function goToPage(url) {
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
+    <text class="section-title">👤 我的</text>
     <view class="profile-header">
       <view class="profile-avatar">{{ store.user.avatar }}</view>
       <text class="p-name">{{ store.user.nickname }}</text>

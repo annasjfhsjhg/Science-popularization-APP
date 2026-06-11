@@ -1,16 +1,16 @@
 <script setup>
 import { useModal } from '../../composables/useModal.js'
 import PixelModal from '../../components/PixelModal.vue'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const { showModal } = useModal()
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
-    <view class="game-header">
-      <view class="back-btn" @tap="uni.navigateBack()">◀</view>
-      <text class="game-title">🤖 AI 科普助手</text>
-    </view>
+    <text class="section-title">🤖 AI 科普助手</text>
 
     <view class="knowledge-card">
       <text class="k-title">你可以这样问我</text>
@@ -22,4 +22,5 @@ const { showModal } = useModal()
     </view>
   </view>
   <PixelModal />
+  <CustomTabBar />
 </template>

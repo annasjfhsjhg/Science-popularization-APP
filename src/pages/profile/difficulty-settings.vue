@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { useUserStore } from '../../stores/user.js'
 import { useModal } from '../../composables/useModal.js'
 import PixelModal from '../../components/PixelModal.vue'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const store = useUserStore()
 const { showModal } = useModal()
@@ -27,11 +29,9 @@ function setDifficulty(level) {
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
-    <view class="game-header">
-      <view class="back-btn" @tap="uni.navigateBack()">◀</view>
-      <text class="game-title">⚙️ 难度设置</text>
-    </view>
+    <text class="section-title">⚙️ 难度设置</text>
 
     <view class="pixel-box">
       <text style="display:block; font-size:28rpx; font-weight:bold; margin-bottom:20rpx;">当前难度</text>
@@ -52,4 +52,5 @@ function setDifficulty(level) {
     </view>
   </view>
   <PixelModal />
+  <CustomTabBar />
 </template>

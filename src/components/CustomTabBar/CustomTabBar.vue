@@ -1,14 +1,13 @@
 <script setup>
 const NAV_ITEMS = [
-  { name: 'home',       path: '/pages/home/home',             icon: '🏠', label: '首页' },
-  { name: 'astronomy',  path: '/pages/astronomy/astronomy',   icon: '🔭', label: '天文' },
-  { name: 'history',    path: '/pages/history/history',       icon: '🏺', label: '历史' },
+  { name: 'home', path: '/pages/home/home', icon: '🏠', label: '首页' },
   { name: 'collection', path: '/pages/collection/collection', icon: '📖', label: '图鉴' },
-  { name: 'profile',    path: '/pages/profile/profile',       icon: '👤', label: '我的' },
+  { name: 'achievement', path: '/pages/achievement/achievement', icon: '🏆', label: '成就' },
+  { name: 'profile', path: '/pages/profile/profile', icon: '👤', label: '我的' },
 ]
 
 defineProps({
-  current: { type: String, default: 'home' }
+  current: { type: String, default: '' }
 })
 
 function goTo(item) {
@@ -17,7 +16,7 @@ function goTo(item) {
 </script>
 
 <template>
-  <view class="tabbar">
+  <view id="custom-tabbar" class="tabbar">
     <view
       v-for="item in NAV_ITEMS"
       :key="item.name"
@@ -36,7 +35,7 @@ function goTo(item) {
   flex-shrink: 0;
   height: 140rpx;
   background: #6998EC;
-  border-top: 4px solid #000;
+  border-top: 4rpx solid #000;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -66,7 +65,7 @@ function goTo(item) {
 .tab-item.active .icon {
   opacity: 1;
   background: #FFEF0F;
-  border: 2px solid #000;
+  border: 2rpx solid #000;
   width: 72rpx;
   height: 72rpx;
   margin: 0 auto 4rpx;

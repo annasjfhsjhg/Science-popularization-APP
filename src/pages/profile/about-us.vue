@@ -1,9 +1,12 @@
+<script setup>
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
+</script>
+
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
-    <view class="game-header">
-      <view class="back-btn" @tap="uni.navigateBack()">◀</view>
-      <text class="game-title">ℹ️ 关于我们</text>
-    </view>
+
 
     <view class="knowledge-card">
       <text class="k-title">科普星球</text>
@@ -14,4 +17,5 @@
       <text class="k-text">演示版本 v1.0.0 · 课程作业前端原型</text>
     </view>
   </view>
+  <CustomTabBar />
 </template>

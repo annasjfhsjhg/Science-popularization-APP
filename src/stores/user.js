@@ -19,12 +19,15 @@ export const useUserStore = defineStore('user', () => {
   const collections = reactive([
     { id: 1, name: '猎户座', category: 'astronomy', unlocked: false },
     { id: 2, name: '月球', category: 'astronomy', unlocked: true },
-    { id: 3, name: '四羊方尊', category: 'history', unlocked: true }
+    { id: 3, name: '四羊方尊', category: 'history', unlocked: false },
+    { id: 4, name: '昆虫百科', category: 'insect', unlocked: false }
   ])
 
   const achievements = reactive([
     { id: 1, name: '天文新手', desc: '解锁第一个天文图鉴', unlocked: false },
-    { id: 2, name: '收藏达人', desc: '解锁 5 个图鉴', unlocked: false }
+    { id: 2, name: '收藏达人', desc: '解锁 5 个图鉴', unlocked: false },
+    { id: 3, name: '文物守护者', desc: '完成历史文物拼图', unlocked: false },
+    { id: 4, name: '昆虫观察者', desc: '完成昆虫生命周期挑战', unlocked: false }
   ])
 
   const difficulty = ref('normal')
@@ -48,23 +51,49 @@ export const useUserStore = defineStore('user', () => {
     if (c && !c.unlocked) {
       c.unlocked = true
       user.stats.collection += 1
-      checkAchievements()
+      const achievements = checkAchievements()
+      return { unlocked: true, collection: c, achievements }
     }
+    return { unlocked: false, collection: null, achievements: [] }
+  }
+
+  function unlockAchievement(name) {
+    const a = achievements.find(i => i.name === name)
+    if (a && !a.unlocked) {
+      a.unlocked = true
+      user.stats.achievements += 1
+      return [a]
+    }
+    return []
   }
 
   function checkAchievements() {
     const unlockedCount = collections.filter(c => c.unlocked).length
+    const unlockedAchievements = []
     achievements.forEach(a => {
       if (a.unlocked) return
       if (a.id === 1 && collections.some(c => c.name === '猎户座' && c.unlocked)) {
         a.unlocked = true
         user.stats.achievements += 1
+        unlockedAchievements.push(a)
       }
       if (a.id === 2 && unlockedCount >= 5) {
         a.unlocked = true
         user.stats.achievements += 1
+        unlockedAchievements.push(a)
+      }
+      if (a.id === 3 && collections.some(c => c.name === '四羊方尊' && c.unlocked)) {
+        a.unlocked = true
+        user.stats.achievements += 1
+        unlockedAchievements.push(a)
+      }
+      if (a.id === 4 && collections.some(c => c.name === '昆虫百科' && c.unlocked)) {
+        a.unlocked = true
+        user.stats.achievements += 1
+        unlockedAchievements.push(a)
       }
     })
+    return unlockedAchievements
   }
 
   function setDifficulty(level) {

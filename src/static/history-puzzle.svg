@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="540" viewBox="0 0 540 540">
+  <rect width="540" height="540" fill="#F7E7B5"/>
+  <rect x="30" y="30" width="480" height="480" rx="40" fill="#E3C18B" stroke="#000" stroke-width="22"/>
+  <path d="M170 210 C170 150 370 150 370 210 L390 300 C390 350 360 390 310 410 L230 410 C180 390 150 350 150 300 Z" fill="#BF8B42" stroke="#000" stroke-width="18"/>
+  <path d="M190 220 C210 180 330 180 350 220" fill="none" stroke="#000" stroke-width="14" stroke-linecap="round"/>
+  <path d="M200 260 C230 240 310 240 340 260" fill="none" stroke="#000" stroke-width="14"/>
+  <path d="M210 300 C245 280 295 280 330 300" fill="none" stroke="#000" stroke-width="12"/>
+  <path d="M220 340 C260 320 300 320 340 340" fill="none" stroke="#000" stroke-width="12"/>
+  <path d="M240 380 C270 365 290 365 320 380" fill="none" stroke="#000" stroke-width="12"/>
+  <path d="M170 200 L150 150 130 150 140 200" fill="#A06634" stroke="#000" stroke-width="16"/>
+  <path d="M370 200 L390 150 410 150 400 200" fill="#A06634" stroke="#000" stroke-width="16"/>
+  <path d="M240 120 L300 120 290 80 250 80 Z" fill="#F5D86D" stroke="#000" stroke-width="14"/>
+  <path d="M220 185 C230 195 310 195 330 185" fill="none" stroke="#000" stroke-width="12"/>
+  <path d="M190 340 L210 360 L230 340" fill="none" stroke="#000" stroke-width="12"/>
+  <path d="M310 340 L330 360 L350 340" fill="none" stroke="#000" stroke-width="12"/>
+  <text x="270" y="500" fill="#000" font-size="52" font-family="sans-serif" text-anchor="middle" font-weight="700">青铜器</text>
+</svg>

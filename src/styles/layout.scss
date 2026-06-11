@@ -8,6 +8,11 @@
   box-sizing: border-box;
 }
 
+/* If a static H5 footer with .tabbar exists elsewhere, hide it.
+   Show only our component which has id #custom-tabbar. */
+.tabbar { display: none !important; }
+#custom-tabbar { display: flex !important; }
+
 /* #ifdef H5 */
 @media (min-width: 768px) {
   .page-wrap {
@@ -27,3 +32,22 @@
   }
 }
 /* #endif */
+
+.tabbar,
+.uni-tabbar,
+.uni-tabbar-wrap,
+.uni-tabbar-fixed,
+.u-tabbar,
+.u-tabbar__wrap {
+  display: none !important;
+}
+
+#custom-tabbar {
+  display: flex !important;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+

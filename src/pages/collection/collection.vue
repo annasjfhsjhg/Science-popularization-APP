@@ -2,12 +2,19 @@
 import { ref, computed, onMounted } from 'vue'
 import { getCollectionList } from '../../api/index.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const activeCategory = ref('all')
 const allItems = ref([])
 const loading = ref(false)
 
 const CATEGORY_ICON = { astronomy: '🌟', history: '🏺', insect: '🦋' }
+const defaultCollections = [
+  { id: 1, name: '猎户座', category: 'astronomy', description: '闪亮的猎户座，夜空中最容易辨认。', unlocked: true },
+  { id: 2, name: '四羊方尊', category: 'history', description: '商代青铜礼器，雕工精美。', unlocked: false },
+  { id: 3, name: '金环蝴蝶', category: 'insect', description: '色彩斑斓的昆虫图鉴。', unlocked: false },
+  { id: 4, name: '月球', category: 'astronomy', description: '地球的唯一自然卫星。', unlocked: true }
+]
 
 const visibleCards = computed(() =>
   activeCategory.value === 'all'
@@ -23,9 +30,14 @@ onMounted(async () => {
   loading.value = true
   try {
     const res = await getCollectionList()
-    if (res.code === 0) allItems.value = res.data || []
+    if (res.code === 0 && Array.isArray(res.data) && res.data.length > 0) {
+      allItems.value = res.data
+    } else {
+      allItems.value = defaultCollections
+    }
   } catch (e) {
     console.error('图鉴加载失败', e)
+    allItems.value = defaultCollections
   } finally {
     loading.value = false
   }
@@ -33,8 +45,9 @@ onMounted(async () => {
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
-    <text class="section-title" style="display:block; text-align:center;">📖 科普图鉴</text>
+    <text class="section-title">📖 科普图鉴</text>
 
     <view class="collection-tabs">
       <view class="ctab" :class="{ active: activeCategory === 'all' }"       @tap="activeCategory = 'all'">全部</view>

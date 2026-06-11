@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useUserStore } from '../../stores/user.js'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const store = useUserStore()
 
@@ -19,11 +21,9 @@ const suggestionText = computed(() =>
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
-    <view class="game-header">
-      <view class="back-btn" @tap="uni.navigateBack()">◀</view>
-      <text class="game-title">📊 学习报告</text>
-    </view>
+    <text class="section-title">📊 学习报告</text>
 
     <view class="pixel-box">
       <text class="r-title">本周学习概览</text>
@@ -44,4 +44,6 @@ const suggestionText = computed(() =>
     </view>
     <view class="pixel-btn" @tap="uni.navigateBack()">返回我的主页</view>
   </view>
+  <CustomTabBar />
 </template>
+

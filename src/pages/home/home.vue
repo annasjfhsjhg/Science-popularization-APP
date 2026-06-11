@@ -1,70 +1,36 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '../../stores/user.js'
 import { getDashboard } from '../../api/index.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const store = useUserStore()
 const levelProgress = computed(() => store.getLevelProgress())
 const expLeft = computed(() => store.user.nextLevelExp - store.user.exp)
 
-const categories = ref([])
+const HOME_CATEGORIES = [
+  { id: 'astronomy', name: '天文世界', subtitle: '星座连线', icon: '🔭' },
+  { id: 'history', name: '历史文物', subtitle: '文物拼图', icon: '🏺' },
+  { id: 'insect', name: '昆虫自然', subtitle: '生态探索', icon: '🦋' },
+  { id: 'challenge', name: '每日挑战', subtitle: '小游戏任务', icon: '🎯' }
+]
+const categories = ref(HOME_CATEGORIES)
+const CARD_BG = { astronomy: '#5DA2F6', history: '#FF7033', insect: '#7DC383', challenge: '#C7A6F0' }
 const dailyRecommend = ref(null)
 
-// 分类名称 → 路由页面名（匹配数据库存的中文名）
-const CATEGORY_ROUTE = {
-  '天文世界': 'astronomy',
-  '历史文明': 'history',
-  '昆虫自然': 'insect',
-}
-// 分类名称 → 图标兜底
-const CATEGORY_ICON_FALLBACK = {
-  '天文世界': '🌌',
-  '历史文明': '🏺',
-  '昆虫自然': '🦋',
-}
-// 分类名称 → 副标题兜底
-const CATEGORY_SUBTITLE = {
-  '天文世界': '星座连线',
-  '历史文明': '文物拼图',
-  '昆虫自然': '生态探索',
-}
-// 推荐卡片分类 → 路由
-const RECOMMEND_ROUTE = { astronomy: 'astronomy', history: 'history', insect: 'insect' }
-
-function getCategoryIcon(cat) {
-  return cat.icon || CATEGORY_ICON_FALLBACK[cat.name] || '🎮'
-}
-
-function getCategorySubtitle(cat) {
-  return cat.description || CATEGORY_SUBTITLE[cat.name] || '开始探索'
-}
-
 function goToCategory(cat) {
-  const page = CATEGORY_ROUTE[cat.name]
-  if (!page) return
-  const tabPages = ['astronomy', 'history', 'collection']
-  if (tabPages.includes(page)) {
-    uni.switchTab({ url: `/pages/${page}/${page}` })
+  if (cat.id === 'challenge') {
+    uni.navigateTo({ url: '/pages/challenge/challenge' })
+  } else if (cat.id === 'collection') {
+    uni.switchTab({ url: '/pages/collection/collection' })
   } else {
-    uni.navigateTo({ url: `/pages/${page}/${page}` })
+    uni.navigateTo({ url: `/pages/${cat.id}/${cat.id}` })
   }
 }
 
 function goToRecommend() {
-  const page = dailyRecommend.value
-    ? (RECOMMEND_ROUTE[dailyRecommend.value.category] || 'astronomy')
-    : 'astronomy'
-  uni.switchTab({ url: `/pages/${page}/${page}` })
-}
-
-function goTo(name) {
-  const tabPages = ['astronomy', 'history', 'collection']
-  if (tabPages.includes(name)) {
-    uni.switchTab({ url: `/pages/${name}/${name}` })
-  } else {
-    uni.navigateTo({ url: `/pages/${name}/${name}` })
-  }
+  uni.navigateTo({ url: '/pages/challenge/challenge' })
 }
 
 onMounted(async () => {
@@ -73,21 +39,22 @@ onMounted(async () => {
     if (res.code === 0) {
       const data = res.data
       store.syncFromBackend(data)
-      categories.value = data.categories || []
       dailyRecommend.value = data.dailyRecommend || null
     }
   } catch (e) {
-    console.error('首页数据加载失败', e)
+    // 后端可能未启动，提供前端回退数据，避免频繁抛错
+    dailyRecommend.value = { name: '每日挑战', description: '完成小游戏，获得经验奖励！' }
+    console.debug('首页数据回退到本地示例', e)
   }
 })
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
     <view class="home-banner">
       <text class="banner-title">你好，{{ store.user.nickname || '小探险家' }}！</text>
       <text class="banner-sub">今天又是元气满满的探索日～</text>
-      <text class="banner-star">★</text>
     </view>
 
     <view class="level-card">
@@ -103,44 +70,189 @@ onMounted(async () => {
 
     <text class="section-title">★ 每日推荐</text>
     <view class="recommend-card" @tap="goToRecommend">
-      <view class="rec-emoji">
-        {{ dailyRecommend ? (CATEGORY_ICON_FALLBACK[dailyRecommend.category] || '🔭') : '🔭' }}
-      </view>
+      <view class="rec-emoji">🔭</view>
       <view>
         <text class="rec-title">
-          {{ dailyRecommend ? ('今日探索：' + dailyRecommend.name) : '今日探索：猎户座的秘密' }}
+          {{ dailyRecommend ? ('今日探索：' + dailyRecommend.name) : '今日探索：每日挑战' }}
         </text>
         <text class="rec-sub">
-          {{ dailyRecommend ? dailyRecommend.description : '点击进入，开启星空之旅！' }}
+          {{ dailyRecommend ? dailyRecommend.description : '点击进入，完成每日小游戏，获得经验奖励！' }}
         </text>
       </view>
     </view>
 
     <text class="section-title">★ 游戏分类</text>
     <view class="game-grid">
-      <!-- 后端分类数据 -->
       <view
         v-for="cat in categories"
         :key="cat.id"
         class="game-card"
         @tap="goToCategory(cat)"
       >
-        <view class="game-icon" :class="'icon-' + (CATEGORY_ROUTE[cat.name] || 'blue')">
-          {{ getCategoryIcon(cat) }}
-        </view>
+        <view class="game-icon" :style="{ background: CARD_BG[cat.id] || '#6998EC' }">{{ cat.icon }}</view>
         <text class="g-title">{{ cat.name }}</text>
-        <text class="g-sub">{{ getCategorySubtitle(cat) }}</text>
-        <text v-if="cat.totalCount > 0" class="g-progress">
-          {{ cat.completedCount }}/{{ cat.totalCount }}
-        </text>
-      </view>
-      <!-- 科普图鉴固定入口（不是游戏分类，不来自后端） -->
-      <view class="game-card" @tap="goTo('collection')">
-        <view class="game-icon icon-purple">📖</view>
-        <text class="g-title">科普图鉴</text>
-        <text class="g-sub">收集知识</text>
+        <text class="g-sub">{{ cat.subtitle }}</text>
       </view>
     </view>
   </view>
   <CustomTabBar current="home" />
 </template>
+
+<style>
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  margin-bottom: 24rpx;
+  background: #6998EC;
+  border: 4rpx solid #000;
+  box-shadow: 6rpx 6rpx 0 #000;
+  color: #FFEEC4;
+}
+.status-text,
+.status-title,
+.battery-text {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+.status-title {
+  flex: 1;
+  text-align: center;
+}
+.battery {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.battery-icon {
+  font-size: 30rpx;
+}
+.home-banner {
+  background: #6998EC;
+  border: 4rpx solid #000;
+  box-shadow: 6rpx 6rpx 0 #000;
+  padding: 30rpx 24rpx;
+  margin-bottom: 24rpx;
+}
+.banner-title {
+  font-size: 40rpx;
+  color: #fff;
+  margin-bottom: 14rpx;
+}
+.banner-sub {
+  font-size: 28rpx;
+  color: #fff;
+}
+.level-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 4rpx solid #000;
+  box-shadow: 6rpx 6rpx 0 #000;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+.pixel-avatar {
+  width: 140rpx;
+  height: 140rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+  background: #FF8C42;
+  border: 4rpx solid #000;
+  margin-right: 24rpx;
+}
+.level-info {
+  flex: 1;
+}
+.level-name {
+  font-size: 30rpx;
+  margin-bottom: 18rpx;
+  display: block;
+}
+.pixel-progress {
+  width: 100%;
+  height: 32rpx;
+  background: #f4f4f4;
+  border: 4rpx solid #000;
+  margin-bottom: 12rpx;
+}
+.pixel-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B35 50%, #FF8C42 50%);
+}
+.exp-hint {
+  font-size: 24rpx;
+  color: #555;
+}
+.recommend-card {
+  display: flex;
+  gap: 24rpx;
+  align-items: center;
+  background: #FFEF0F;
+  border: 4rpx solid #000;
+  box-shadow: 6rpx 6rpx 0 #000;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+.rec-emoji {
+  width: 120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  background: #fff;
+  border: 4rpx solid #000;
+}
+.rec-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+.rec-sub {
+  font-size: 26rpx;
+  color: #333;
+}
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+  margin-bottom: 120rpx;
+}
+.game-card {
+  background: #fff;
+  border: 4rpx solid #000;
+  box-shadow: 6rpx 6rpx 0 #000;
+  padding: 24rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 240rpx;
+  justify-content: center;
+}
+.game-icon {
+  width: 100rpx;
+  height: 100rpx;
+  background: #6998EC;
+  border: 4rpx solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  margin-bottom: 12rpx;
+}
+.g-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+.g-sub {
+  font-size: 22rpx;
+  color: #555;
+  text-align: center;
+  line-height: 1.4;
+}
+</style>

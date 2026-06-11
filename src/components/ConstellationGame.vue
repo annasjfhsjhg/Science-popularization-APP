@@ -1,173 +1,192 @@
 <script setup>
-import { ref, reactive, onMounted, getCurrentInstance, nextTick } from 'vue'
-import { getGameLevel, submitGameResult, getAchievementList } from '../api/index.js'
+import { ref, onMounted, nextTick, getCurrentInstance } from 'vue'
+import { getGameLevel, submitGameResult } from '../api/index.js'
+import { useUserStore } from '../stores/user.js'
 
 const emit = defineEmits(['game-complete'])
 const instance = getCurrentInstance()
+const userStore = useUserStore()
 
-const CANVAS_ID = 'constellation-canvas'
 const tip = ref('点击两颗星把它们连起来！')
-
-const stars = reactive([
-  { id: 1, x: 35,  y: 25  },
-  { id: 2, x: 70,  y: 45  },
-  { id: 3, x: 105, y: 65  },
-  { id: 4, x: 135, y: 50  },
-  { id: 5, x: 55,  y: 90  },
-  { id: 6, x: 90,  y: 110 },
-  { id: 7, x: 130, y: 120 },
-])
-
+const stars = ref([])
 const activeStarIds = ref(new Set())
-// 存储每颗星的像素坐标（来自 SelectorQuery）
-const starPositions = ref({})
-// 已绘制的连线
 const lines = ref([])
-let canvasWidth = 0
-let canvasHeight = 0
-let selected = []
-let isPlaying = true
-let correctOrder = []
+const selected = ref([])
+const correctOrder = ref([])
+const isPlaying = ref(false)
+const canvasWidth = ref(0)
+const canvasHeight = ref(0)
+
+const defaultStars = [
+  { id: 1, x: 70, y: 50 },
+  { id: 2, x: 140, y: 90 },
+  { id: 3, x: 210, y: 130 },
+  { id: 4, x: 270, y: 100 },
+  { id: 5, x: 110, y: 180 },
+  { id: 6, x: 180, y: 220 },
+  { id: 7, x: 260, y: 240 }
+]
 
 onMounted(async () => {
-  try {
-    const res = await getGameLevel()
-    if (res?.data?.stars?.length) {
-      stars.splice(0, stars.length, ...res.data.stars)
-    }
-    if (res?.data?.correctOrder?.length) {
-      correctOrder = res.data.correctOrder
-    }
-    tip.value = '点击星星，按顺序连线'
-  } catch {
-    tip.value = '点击两颗星把它们连起来！'
-  }
-
-  // 等待 DOM 渲染完成后获取坐标
-  await nextTick()
-  await getCanvasSize()
-  await getStarPositions()
+  await initAstronomyGame()
 })
 
-function getCanvasSize() {
+async function initAstronomyGame() {
+  tip.value = '正在加载星座...'
+  isPlaying.value = true
+  selected.value = []
+  activeStarIds.value = new Set()
+  lines.value = []
+
+  try {
+    const res = await Promise.race([
+      getGameLevel(),
+      new Promise(resolve => setTimeout(() => resolve(null), 800))
+    ])
+    const data = res?.data || res || {}
+    stars.value = Array.isArray(data.stars) && data.stars.length ? data.stars : defaultStars
+    correctOrder.value = Array.isArray(data.correctOrder) && data.correctOrder.length
+      ? data.correctOrder
+      : stars.value.map(star => star.id)
+  } catch {
+    stars.value = defaultStars
+    correctOrder.value = defaultStars.map(star => star.id)
+  }
+
+  await nextTick()
+  await updateCanvasSize()
+  normalizeStarPositions()
+  tip.value = '点击星星，按顺序连线'
+}
+
+function updateCanvasSize() {
   return new Promise(resolve => {
     const query = uni.createSelectorQuery().in(instance.proxy)
     query.select('.star-canvas').boundingClientRect(rect => {
       if (rect) {
-        canvasWidth = rect.width
-        canvasHeight = rect.height
+        canvasWidth.value = rect.width
+        canvasHeight.value = rect.height
       }
       resolve()
     }).exec()
   })
 }
 
-function getStarPositions() {
-  return new Promise(resolve => {
-    const query = uni.createSelectorQuery().in(instance.proxy)
-    let pending = stars.length
-    stars.forEach(star => {
-      query.select(`#star-${star.id}`).boundingClientRect(rect => {
-        if (rect) {
-          starPositions.value[star.id] = {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2
-          }
-        }
-        pending--
-        if (pending === 0) resolve()
-      })
-    })
-    query.exec()
-  })
+function normalizeStarPositions() {
+  if (!canvasWidth.value || !canvasHeight.value || stars.value.length === 0) return
+
+  const xs = stars.value.map(star => star.x)
+  const ys = stars.value.map(star => star.y)
+  const minX = Math.min(...xs)
+  const maxX = Math.max(...xs)
+  const minY = Math.min(...ys)
+  const maxY = Math.max(...ys)
+
+  const margin = 24
+  const sourceWidth = maxX - minX
+  const sourceHeight = maxY - minY
+  const targetWidth = Math.max(canvasWidth.value - margin * 2, sourceWidth)
+  const targetHeight = Math.max(canvasHeight.value - margin * 2, sourceHeight)
+
+  const offsetX = (targetWidth - sourceWidth) / 2 - minX + margin
+  const offsetY = (targetHeight - sourceHeight) / 2 - minY + margin
+
+  stars.value = stars.value.map(star => ({
+    ...star,
+    x: star.x + offsetX,
+    y: star.y + offsetY
+  }))
 }
 
-async function handleStarClick(id) {
-  if (!isPlaying) return
+function handleStarClick(id) {
+  if (!isPlaying.value) return
+  if (selected.value.includes(id)) return
 
-  // 如果坐标还没准备好，重新获取一次
-  if (Object.keys(starPositions.value).length < stars.length) {
-    await getCanvasSize()
-    await getStarPositions()
-  }
-
-  if (correctOrder.length > 0 && id !== correctOrder[selected.length]) {
+  const expectedId = correctOrder.value[selected.value.length]
+  if (id !== expectedId) {
+    isPlaying.value = false
     tip.value = '❌ 顺序不对，重新连线！'
     setTimeout(reset, 800)
     return
   }
 
-  selected.push(id)
-  activeStarIds.value = new Set(selected)
+  selected.value.push(id)
+  activeStarIds.value = new Set(selected.value)
 
-  if (selected.length > 1) {
-    const fromId = selected[selected.length - 2]
-    const p1 = starPositions.value[fromId]
-    const p2 = starPositions.value[id]
-    if (p1 && p2) {
-      lines.value.push({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y })
-      drawCanvas()
+  if (selected.value.length > 1) {
+    const fromId = selected.value[selected.value.length - 2]
+    const fromStar = stars.value.find(star => star.id === fromId)
+    const toStar = stars.value.find(star => star.id === id)
+    if (fromStar && toStar) {
+      lines.value.push({
+        x1: fromStar.x + 8,
+        y1: fromStar.y + 8,
+        x2: toStar.x + 8,
+        y2: toStar.y + 8
+      })
     }
   }
 
-  if (correctOrder.length > 0 && selected.length === correctOrder.length) {
+  if (selected.value.length === correctOrder.value.length) {
     finishGame()
-  } else if (correctOrder.length === 0 && selected.length >= 2) {
-    tip.value = `已连 ${selected.length} 颗星！`
+  } else {
+    tip.value = `已连 ${selected.value.length} 颗星！`
   }
-}
-
-function drawCanvas() {
-  const ctx = uni.createCanvasContext(CANVAS_ID, instance.proxy)
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-  ctx.setStrokeStyle('#FFD700')
-  ctx.setLineWidth(3)
-  ctx.beginPath()
-  lines.value.forEach(line => {
-    ctx.moveTo(line.x1, line.y1)
-    ctx.lineTo(line.x2, line.y2)
-  })
-  ctx.stroke()
-  ctx.draw()
 }
 
 async function finishGame() {
-  isPlaying = false
+  isPlaying.value = false
   tip.value = '⭐ 太棒了！星座连线完成！'
-  submitGameResult({ gameType: 'astronomy', score: 100, timeUsed: 0, stars: 3 }).catch(() => {})
-  try {
-    const list = await getAchievementList()
-    emit('game-complete', Array.isArray(list) ? list : [])
-  } catch {
-    emit('game-complete', [])
-  }
+
+  const score = 100
+  userStore.addExp(score)
+
+  const collectionResult = userStore.unlockCollection('猎户座')
+  const newAchievements = collectionResult.achievements || []
+
+  submitGameResult({
+    gameType: 'astronomy',
+    score,
+    timeUsed: 0,
+    stars: 3
+  }).catch(() => {})
+
+  emit('game-complete', {
+    score,
+    unlockedCollection: collectionResult.unlocked ? collectionResult.collection.name : null,
+    achievements: newAchievements
+  })
 }
 
 function reset() {
-  isPlaying = true
-  selected = []
+  isPlaying.value = true
+  selected.value = []
   activeStarIds.value = new Set()
   lines.value = []
-  const ctx = uni.createCanvasContext(CANVAS_ID, instance.proxy)
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-  ctx.draw()
   tip.value = '点击星星，按顺序连线'
 }
 
-defineExpose({ reset })
+defineExpose({ reset, initAstronomyGame })
 </script>
 
 <template>
   <view class="star-canvas">
     <text class="star-tip">{{ tip }}</text>
 
-    <!-- canvas 层：绘制连线，不响应点击 -->
-    <canvas
-      :canvas-id="CANVAS_ID"
-      class="constellation-canvas"
-    />
+    <svg id="lineLayer" class="line-layer" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="none">
+      <line
+        v-for="(line, index) in lines"
+        :key="index"
+        :x1="line.x1"
+        :y1="line.y1"
+        :x2="line.x2"
+        :y2="line.y2"
+        stroke="#FFD700"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+    </svg>
 
-    <!-- 星星层：响应点击 -->
     <view
       v-for="star in stars"
       :key="star.id"
@@ -179,3 +198,20 @@ defineExpose({ reset })
     />
   </view>
 </template>
+
+<style scoped>
+.line-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.star {
+  z-index: 2;
+}
+.star-tip {
+  z-index: 3;
+}
+</style>

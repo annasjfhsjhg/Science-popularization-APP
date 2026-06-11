@@ -31,6 +31,12 @@
       }
     },
     {
+      "path": "pages/challenge/challenge",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/collection/collection",
       "style": {
         "navigationStyle": "custom"
@@ -93,9 +99,8 @@
     "backgroundColor": "#6998EC",
     "list": [
       { "pagePath": "pages/home/home",             "text": "首页" },
-      { "pagePath": "pages/astronomy/astronomy",   "text": "天文" },
-      { "pagePath": "pages/history/history",       "text": "历史" },
       { "pagePath": "pages/collection/collection", "text": "图鉴" },
+      { "pagePath": "pages/achievement/achievement", "text": "成就" },
       { "pagePath": "pages/profile/profile",       "text": "我的" }
     ]
   },

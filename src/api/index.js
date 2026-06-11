@@ -10,14 +10,22 @@ function request(options) {
     uni.request({
       ...options,
       success(res) {
-        if (res.statusCode === 401) {
+        const status = res.statusCode
+        if (status === 401) {
           uni.removeStorageSync('token')
           uni.removeStorageSync('userId')
           uni.reLaunch({ url: '/pages/login/login' })
           reject(new Error('未登录或Token已过期'))
           return
         }
-        resolve(res.data)
+        if (status >= 200 && status < 300) {
+          resolve(res.data)
+        } else {
+          const err = new Error('HTTP ' + status)
+          err.status = status
+          err.data = res.data
+          reject(err)
+        }
       },
       fail(err) {
         reject(err)
@@ -86,6 +94,14 @@ export function getAchievementList() {
 export function getGameLevel() {
   return request({
     url: `${BASE_URL}/api/game/level?gameType=astronomy`,
+    method: 'GET',
+    header: authHeader()
+  })
+}
+
+export function getDailyQuestions() {
+  return request({
+    url: `${BASE_URL}/api/game/daily`,
     method: 'GET',
     header: authHeader()
   })

@@ -4,17 +4,28 @@ import ConstellationGame from '../../components/ConstellationGame.vue'
 import { useModal } from '../../composables/useModal.js'
 import PixelModal from '../../components/PixelModal.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const { showModal } = useModal()
 const gameRef = ref(null)
 
-function onGameComplete(achievements) {
-  const unlocked = achievements.filter(a => a.unlocked)
-  if (unlocked.length > 0) {
-    showModal('🏆 成就解锁！', unlocked.map(a => `${a.name}：${a.desc}`).join('\n'), '🏆')
-  } else {
-    showModal('⭐ 完成！', '星座连线完成，继续探索更多吧！', '🌟')
+function onGameComplete(result) {
+  const score = result?.score ?? 0
+  const unlockedCollection = result?.unlockedCollection
+  const achievements = Array.isArray(result?.achievements) ? result.achievements : []
+
+  const parts = [`获得积分：+${score}`]
+  if (unlockedCollection) {
+    parts.push(`解锁图鉴：${unlockedCollection}`)
   }
+  if (achievements.length > 0) {
+    parts.push(`获得成就：${achievements.map(a => a.name).join('、')}`)
+  }
+  if (!unlockedCollection && achievements.length === 0) {
+    parts.push('本次未解锁新成就，已获得经验值。')
+  }
+
+  showModal('⭐ 连线成功！', parts.join('\n'), '🌟')
 }
 
 function resetStars() {
@@ -23,11 +34,9 @@ function resetStars() {
 </script>
 
 <template>
+  <PixelStatusBar />
   <view class="page-wrap">
-    <view class="game-header">
-      <view class="back-btn" @tap="uni.navigateBack()">◀</view>
-      <text class="game-title">🌌 星座连线</text>
-    </view>
+    <text class="section-title">🌌 星座连线</text>
 
     <ConstellationGame ref="gameRef" @game-complete="onGameComplete" />
 
@@ -39,8 +48,12 @@ function resetStars() {
       <text class="k-title">💡 小知识</text>
       <text class="k-text">古希腊神话中，猎户座代表勇敢的猎人俄里翁。点击星星把它们连起来吧！</text>
     </view>
-    <view class="pixel-btn" style="width:100%; margin-top:12rpx;" @tap="resetStars">🔄 重新连线</view>
+    <view class="knowledge-card small-recommend">
+      <text class="k-title">📝 推荐玩法</text>
+      <text class="k-text">完成星座连线后，可以继续挑战历史拼图和昆虫生命周期，三种主题一起做更容易记住知识点。</text>
+    </view>
+    <view class="pixel-btn" style="width:87%; margin-top:6px;" @tap="resetStars">🔄 重新连线</view>
   </view>
-  <CustomTabBar current="astronomy" />
+  <CustomTabBar />
   <PixelModal />
 </template>
