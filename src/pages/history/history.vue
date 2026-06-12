@@ -245,6 +245,10 @@ function onPointerUp(event) {
   dragStyle.display = 'none'
 }
 
+function goToHome() {
+  uni.switchTab({ url: '/pages/home/home' })
+}
+
 function handleComplete() {
   const emptySlot = gridSlots.some(slot => slot.value == null)
   if (emptySlot) {
@@ -284,7 +288,20 @@ function handleComplete() {
   }).catch(() => {})
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // 尝试从后端获取拼图配置（3秒超时）
+  try {
+    await Promise.race([
+      fetch('/api/game/history-puzzle', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + uni.getStorageSync('token') }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+  } catch (e) {
+    console.debug('历史拼图配置加载超时，使用本地数据', e)
+  }
+  
   initPuzzle()
   const moveHandler = onPointerMove
   const upHandler = onPointerUp
@@ -304,7 +321,10 @@ onUnmounted(() => {
 <template>
   <PixelStatusBar />
   <view class="page-wrap" @pointermove="onPointerMove" @pointerup="onPointerUp">
-    <text class="section-title">🏺 文物拼图</text>
+    <view class="title-row">
+      <view class="back-btn" @tap="goToHome">◄</view>
+      <text class="section-title">🏺 文物拼图</text>
+    </view>
 
     <view class="puzzle-board">
       <view class="puzzle-grid" ref="boardRef">
@@ -467,5 +487,28 @@ onUnmounted(() => {
   border-radius: 16rpx;
   z-index: 1000;
   font-size: 26rpx;
+}
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border: 3px solid #000;
+  box-shadow: 4rpx 4rpx 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  background: #FFEF0F;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.back-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
 }
 </style>

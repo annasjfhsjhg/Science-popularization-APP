@@ -51,9 +51,9 @@ const { state, hideModal } = useModal()
 .modal-title {
   display: block;
   color: #FF6B35;
-  font-size: 32rpx;
+  font-size: 40rpx;
   margin-bottom: 20rpx;
-  text-shadow: 2px 2px 0 #000;
+  font-weight: normal;
 }
 
 .modal-text {

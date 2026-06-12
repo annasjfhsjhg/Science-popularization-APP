@@ -34,6 +34,15 @@ function request(options) {
   })
 }
 
+function requestWithTimeout(options, timeout = 3000) {
+  return Promise.race([
+    request(options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('请求超时')), timeout)
+    )
+  ])
+}
+
 function authHeader() {
   return {
     'Content-Type': 'application/json',
@@ -44,6 +53,15 @@ function authHeader() {
 export function login(data) {
   return request({
     url: `${BASE_URL}/api/auth/login`,
+    method: 'POST',
+    header: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    data
+  })
+}
+
+export function register(data) {
+  return request({
+    url: `${BASE_URL}/api/auth/register`,
     method: 'POST',
     header: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     data

@@ -17,10 +17,10 @@ export const useUserStore = defineStore('user', () => {
   })
 
   const collections = reactive([
-    { id: 1, name: '猎户座', category: 'astronomy', unlocked: false },
-    { id: 2, name: '月球', category: 'astronomy', unlocked: true },
-    { id: 3, name: '四羊方尊', category: 'history', unlocked: false },
-    { id: 4, name: '昆虫百科', category: 'insect', unlocked: false }
+    { id: 1, name: '猎户座', category: 'astronomy', description: '闪亮的猎户座，夜空中最容易辨认的星座。', unlocked: false },
+    { id: 2, name: '月球', category: 'astronomy', description: '地球的唯一自然卫星，月相变化的神秘天体。', unlocked: true },
+    { id: 3, name: '四羊方尊', category: 'history', description: '商代青铜礼器，雕工精美的文物瑰宝。', unlocked: false },
+    { id: 4, name: '昆虫百科', category: 'insect', description: '昆虫的生命周期和演化奥秘。', unlocked: false }
   ])
 
   const achievements = reactive([

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useUserStore } from '../../stores/user.js'
 import { useModal } from '../../composables/useModal.js'
 import PixelModal from '../../components/PixelModal.vue'
@@ -8,6 +8,21 @@ import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const store = useUserStore()
 const { showModal } = useModal()
+
+onMounted(async () => {
+  // 尝试从后端获取难度设置（3秒超时）
+  try {
+    await Promise.race([
+      fetch('/api/user/difficulty', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + uni.getStorageSync('token') }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+  } catch (e) {
+    console.debug('难度设置加载超时，使用本地设置', e)
+  }
+})
 
 const difficultyText = computed(() => ({
   easy:   '轻松模式：更多提示与引导，适合刚开始探索的小朋友。',

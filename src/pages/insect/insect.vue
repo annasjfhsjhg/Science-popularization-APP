@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useModal } from '../../composables/useModal.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import PixelModal from '../../components/PixelModal.vue'
@@ -44,6 +44,10 @@ function resetGame() {
   selectedStages.value = []
   tip.value = '按正确顺序点击生命周期阶段'
   items.value = shuffle(initialItems)
+}
+
+function goToHome() {
+  uni.switchTab({ url: '/pages/home/home' })
 }
 
 function handleItemTap(item) {
@@ -93,12 +97,26 @@ function handleItemTap(item) {
 function isSelected(item) {
   return selectedStages.value.includes(item.id)
 }
+
+onMounted(async () => {
+  // 尝试从后端获取昆虫数据（3秒超时）
+  try {
+    await Promise.race([
+      fetch('/api/game/insect-stages', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + uni.getStorageSync('token') }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+  } catch (e) {
+    console.debug('昆虫游戏数据加载超时，使用本地数据', e)
+  }
+})
 </script>
 
 <template>
   <PixelStatusBar />
-  <view class="page-wrap">
-    <text class="section-title">🦋 生命周期</text>
+  <view class="page-wrap">    <view class="title-row">      <view class="back-btn" @tap="goToHome">◄</view>    <text class="section-title">🦋 生命周期</text>    </view>
 
     <view class="insect-area">
         <text class="i-tip">{{ tip }}</text>
@@ -217,4 +235,28 @@ function isSelected(item) {
   font-size: 30rpx;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border: 3px solid #000;
+  box-shadow: 4rpx 4rpx 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  background: #FFEF0F;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.back-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
+}
 </style>

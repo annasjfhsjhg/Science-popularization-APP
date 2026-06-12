@@ -31,12 +31,19 @@ function onGameComplete(result) {
 function resetStars() {
   gameRef.value?.reset()
 }
+
+function goToHome() {
+  uni.switchTab({ url: '/pages/home/home' })
+}
 </script>
 
 <template>
   <PixelStatusBar />
   <view class="page-wrap">
-    <text class="section-title">🌌 星座连线</text>
+    <view class="title-row">
+      <view class="back-btn" @tap="goToHome">◄</view>
+      <text class="section-title">🌌 星座连线</text>
+    </view>
 
     <ConstellationGame ref="gameRef" @game-complete="onGameComplete" />
 
@@ -57,3 +64,29 @@ function resetStars() {
   <CustomTabBar />
   <PixelModal />
 </template>
+
+<style>
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border: 3px solid #000;
+  box-shadow: 4rpx 4rpx 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  background: #FFEF0F;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.back-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
+}
+</style>

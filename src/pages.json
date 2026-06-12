@@ -7,6 +7,12 @@
       }
     },
     {
+      "path": "pages/register/register",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/home/home",
       "style": {
         "navigationStyle": "custom"

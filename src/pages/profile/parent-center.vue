@@ -1,6 +1,22 @@
 <script setup>
+import { onMounted } from 'vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import PixelStatusBar from '../../components/PixelStatusBar.vue'
+
+onMounted(async () => {
+  // 尝试从后端获取家长中心数据（3秒超时）
+  try {
+    await Promise.race([
+      fetch('/api/user/parent-data', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + uni.getStorageSync('token') }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+  } catch (e) {
+    console.debug('家长数据加载超时，使用本地数据', e)
+  }
+})
 </script>
 
 <template>

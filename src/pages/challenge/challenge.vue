@@ -71,13 +71,17 @@ function resetChallenge() {
 }
 
 onMounted(() => {
-  getDailyQuestions().then((res) => {
+  // 3秒超时，避免挑战页卡
+  Promise.race([
+    getDailyQuestions(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+  ]).then((res) => {
     // assume backend returns an array of question objects
     if (Array.isArray(res) && res.length) {
       questionSet.value = shuffle(res)
     }
   }).catch(() => {
-    // keep local questions on failure
+    // 超时或失败，keep local questions
   })
 })
 
@@ -117,12 +121,19 @@ function handleChoose(option) {
   index.value += 1
   selectedOption.value = ''
 }
+
+function goToHome() {
+  uni.switchTab({ url: '/pages/home/home' })
+}
 </script>
 
 <template>
   <PixelStatusBar />
   <view class="page-wrap">
-    <text class="section-title">🎯 每日挑战</text>
+    <view class="title-row">
+      <view class="back-btn" @tap="goToHome">◄</view>
+      <text class="section-title">🎯 每日挑战</text>
+    </view>
 
     <view class="challenge-card">
       <text class="challenge-title">{{ currentQuestion().title }}</text>
@@ -156,6 +167,29 @@ function handleChoose(option) {
 </template>
 
 <style scoped>
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border: 3px solid #000;
+  box-shadow: 4rpx 4rpx 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  background: #FFEF0F;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.back-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000;
+}
 .challenge-card {
   background: #FFEF0F;
   border: 4rpx solid #000;

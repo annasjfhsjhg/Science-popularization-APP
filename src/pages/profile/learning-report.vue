@@ -1,10 +1,25 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useUserStore } from '../../stores/user.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const store = useUserStore()
+
+onMounted(async () => {
+  // 尝试从后端获取学习报告数据（3秒超时）
+  try {
+    await Promise.race([
+      fetch('/api/user/learning-report', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + uni.getStorageSync('token') }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+  } catch (e) {
+    console.debug('学习报告加载超时，使用本地数据', e)
+  }
+})
 
 const reportDays    = computed(() => Math.min(7, Math.max(3, Math.floor(store.user.joinDays / 5))))
 const reportFinish  = computed(() => store.user.stats.collection + store.user.stats.achievements)

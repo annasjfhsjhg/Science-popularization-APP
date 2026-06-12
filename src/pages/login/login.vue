@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { login } from '../../api/index.js'
+import { useUserStore } from '../../stores/user.js'
 
 const username = ref('')
 const password = ref('')
 const loading = ref(false)
+const userStore = useUserStore()
 
 async function handleLogin() {
   // if (loading.value) return
@@ -13,6 +15,9 @@ async function handleLogin() {
   //   const res = await login({ username: username.value, password: password.value })
   //   if (res.code === 0 && res.data?.token) {
   //     uni.setStorageSync('token', res.data.token)
+  //     if (res.data?.user) {
+  //       userStore.syncFromBackend(res.data.user)
+  //     }
   //     uni.reLaunch({ url: '/pages/home/home' })
   //   } else {
   //     uni.showToast({ title: '登录失败：' + (res.message || '未知错误'), icon: 'none', duration: 2000 })
@@ -23,6 +28,10 @@ async function handleLogin() {
   //   loading.value = false
   // }
   uni.reLaunch({ url: '/pages/home/home' })
+}
+
+function goToRegister() {
+  uni.reLaunch({ url: '/pages/register/register' })
 }
 </script>
 
@@ -50,6 +59,8 @@ async function handleLogin() {
       <view class="pixel-btn login-btn" :class="{ disabled: loading }" @tap="handleLogin">
         {{ loading ? '登录中...' : '登 录' }}
       </view>
+
+      <text class="login-link" @tap="goToRegister">没有账号？立即注册</text>
     </view>
   </view>
 </template>
@@ -107,4 +118,12 @@ async function handleLogin() {
   margin: 0 auto;
 }
 .login-btn.disabled { opacity: 0.6; }
+.login-link {
+  display: block;
+  color: #FF6B35;
+  font-size: 24rpx;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 24rpx;
+}
 </style>

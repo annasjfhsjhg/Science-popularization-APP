@@ -9,11 +9,15 @@ const store = useUserStore()
 
 onMounted(async () => {
   try {
-    const [infoRes, profileRes] = await Promise.all([getUserInfo(), getUserProfile()])
-    if (infoRes.code === 0)    store.syncFromBackend(infoRes.data)
-    if (profileRes.code === 0) store.syncFromBackend(profileRes.data)
+    // 3秒超时，避免个人页卡
+    const [infoRes, profileRes] = await Promise.race([
+      Promise.all([getUserInfo(), getUserProfile()]),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+    if (infoRes?.code === 0)    store.syncFromBackend(infoRes.data)
+    if (profileRes?.code === 0) store.syncFromBackend(profileRes.data)
   } catch (e) {
-    console.error('用户信息加载失败', e)
+    console.debug('用户信息加载失败，使用本地数据', e)
   }
 })
 

@@ -35,7 +35,11 @@ function goToRecommend() {
 
 onMounted(async () => {
   try {
-    const res = await getDashboard()
+    // 3秒超时，避免后端慢导致首页卡
+    const res = await Promise.race([
+      getDashboard(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
     if (res.code === 0) {
       const data = res.data
       store.syncFromBackend(data)

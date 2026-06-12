@@ -1,10 +1,26 @@
 <script setup>
+import { onMounted } from 'vue'
 import { useModal } from '../../composables/useModal.js'
 import PixelModal from '../../components/PixelModal.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
 const { showModal } = useModal()
+
+onMounted(async () => {
+  // 尝试从后端获取AI助手配置（3秒超时）
+  try {
+    await Promise.race([
+      fetch('/api/ai/config', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + uni.getStorageSync('token') }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
+  } catch (e) {
+    console.debug('AI配置加载超时，使用本地配置', e)
+  }
+})
 </script>
 
 <template>

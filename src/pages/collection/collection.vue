@@ -1,25 +1,18 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getCollectionList } from '../../api/index.js'
+import { useUserStore } from '../../stores/user.js'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import PixelStatusBar from '../../components/PixelStatusBar.vue'
 
+const store = useUserStore()
 const activeCategory = ref('all')
-const allItems = ref([])
-const loading = ref(false)
 
 const CATEGORY_ICON = { astronomy: '🌟', history: '🏺', insect: '🦋' }
-const defaultCollections = [
-  { id: 1, name: '猎户座', category: 'astronomy', description: '闪亮的猎户座，夜空中最容易辨认。', unlocked: true },
-  { id: 2, name: '四羊方尊', category: 'history', description: '商代青铜礼器，雕工精美。', unlocked: false },
-  { id: 3, name: '金环蝴蝶', category: 'insect', description: '色彩斑斓的昆虫图鉴。', unlocked: false },
-  { id: 4, name: '月球', category: 'astronomy', description: '地球的唯一自然卫星。', unlocked: true }
-]
 
 const visibleCards = computed(() =>
   activeCategory.value === 'all'
-    ? allItems.value
-    : allItems.value.filter(c => c.category === activeCategory.value)
+    ? store.collections
+    : store.collections.filter(c => c.category === activeCategory.value)
 )
 
 function getIcon(item) {
@@ -27,19 +20,19 @@ function getIcon(item) {
 }
 
 onMounted(async () => {
-  loading.value = true
   try {
-    const res = await getCollectionList()
-    if (res.code === 0 && Array.isArray(res.data) && res.data.length > 0) {
-      allItems.value = res.data
-    } else {
-      allItems.value = defaultCollections
-    }
+    // 3秒超时，避免图鉴页卡
+    await Promise.race([
+      fetch('/api/encyclopedia/list?category=all', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + uni.getStorageSync('token')
+        }
+      }).catch(() => {}),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 3000))
+    ])
   } catch (e) {
-    console.error('图鉴加载失败', e)
-    allItems.value = defaultCollections
-  } finally {
-    loading.value = false
+    console.debug('图鉴数据加载超时，使用本地数据', e)
   }
 })
 </script>
@@ -56,11 +49,7 @@ onMounted(async () => {
       <view class="ctab" :class="{ active: activeCategory === 'insect' }"    @tap="activeCategory = 'insect'">昆虫</view>
     </view>
 
-    <view v-if="loading" style="text-align:center; padding: 40rpx;">
-      <text>加载中...</text>
-    </view>
-
-    <view v-else class="collection-grid">
+    <view class="collection-grid">
       <view
         v-for="card in visibleCards"
         :key="card.id"
