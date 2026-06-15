@@ -20,3 +20,7 @@ spring:
       simple:
         acknowledge-mode: manual   # 手动 ACK，消费失败不丢消息
         prefetch: 1
+
+kepu:
+  ai:
+    api-key: sk-087f590a4dcd4921b2686d1fd8cd08ea

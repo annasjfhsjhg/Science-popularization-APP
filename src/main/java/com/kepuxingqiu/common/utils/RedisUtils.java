@@ -3,6 +3,7 @@ package com.kepuxingqiu.common.utils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -65,5 +66,25 @@ public class RedisUtils {
 
     public void hdelete(String key, String... fields) {
         redisTemplate.opsForHash().delete(key, (Object[]) fields);
+    }
+
+    // -------- List 操作（用于 ai:session:{userId} 对话历史）--------
+
+    public void lRightPush(String key, String value) {
+        redisTemplate.opsForList().rightPush(key, value);
+    }
+
+    public List<String> lRange(String key, long start, long end) {
+        List<String> result = redisTemplate.opsForList().range(key, start, end);
+        return result != null ? result : java.util.Collections.emptyList();
+    }
+
+    public void lTrim(String key, long start, long end) {
+        redisTemplate.opsForList().trim(key, start, end);
+    }
+
+    public Long lLen(String key) {
+        Long size = redisTemplate.opsForList().size(key);
+        return size != null ? size : 0L;
     }
 }

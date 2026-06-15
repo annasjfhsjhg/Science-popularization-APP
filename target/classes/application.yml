@@ -46,3 +46,6 @@ kepu:
     # 至少256位(32字节)以支持HS256
     secret: kepuxingqiu-secret-key-2024-must-be-at-least-256-bits
     expire: 604800  # 7天，单位秒
+  ai:
+    api-key: ${DASHSCOPE_API_KEY:}
+    model: qwen-turbo
